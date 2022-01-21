@@ -2,7 +2,15 @@
 
 set -euxo pipefail
 
+vm=("192.168.50.50" "192.168.60.60" "192.168.70.70")
+
 vagrant up
-ssh-keygen -R 192.168.50.50
-ssh -o "StrictHostKeyChecking no" vagrant@192.168.50.50 'sleep 2 &'  # exits after 5 seconds
-ansible-playbook -i hosts playbook.yml
+
+for ip in ${vm[@]}
+do
+    ssh-keygen -R $ip
+    ssh -o "StrictHostKeyChecking no" vagrant@$ip 'sleep 2 &' 
+done
+
+
+ansible-playbook -i ansible/playbooks/hosts playbook.yml

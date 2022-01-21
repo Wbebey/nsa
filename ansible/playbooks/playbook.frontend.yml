@@ -1,0 +1,55 @@
+---
+- name: frontend
+  hosts: frontend
+  remote_user: root
+  tasks:
+  - include_vars:
+      file: ../vars.yml
+
+  - name: "USER | Create user {{ user }}"
+    user: 
+      name: "{{ user }}"
+      shell: /bin/bash
+
+  - name: USER | Ssh key
+    authorized_key:
+      user: "{{ user }}"
+      state: present
+      key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+  - name: "USER | Sudoers {{ user }}"
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: "^{{ user }}"
+      line: '{{ user }} ALL=(ALL) NOPASSWD: ALL'
+      validate: 'visudo -cf %s'
+
+  - name: APT | Update
+    apt:
+      update_cache: yes
+
+  - name: FILE | Create directory
+    file:
+      path: "{{ frontend_workdir }}"
+      state: directory
+      owner: "{{ user }}"
+      group: "{{ user }}"
+      mode: 0775
+      recurse: yes
+
+  - name: FILE | Copy frontend project
+    copy:
+      src: ../../frontend/front/
+      dest: "{{ frontend_workdir }}"
+      owner: "{{ user }}"
+      group: "{{ user }}"
+
+  - include_role:
+      name: ../tools/
+
+  - include_role:
+      name: ../nginx/
+
+  - include_role:
+      name: ../nodejs/

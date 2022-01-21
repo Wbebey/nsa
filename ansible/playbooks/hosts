@@ -1,0 +1,26 @@
+# This is the default ansible 'hosts' file.
+#
+#
+#   - Comments begin with the '#' character
+#   - Blank lines are ignored
+#   - Groups of hosts are delimited by [header] elements
+#   - You can enter hostnames or ip addresses
+#   - A hostname/ip can be a member of multiple groups
+
+[backend]
+backend_1 ansible_host=192.168.50.50 ansible_user=root ansible_python_interpreter=/usr/bin/python3
+
+[backend:vars]
+user=nsa
+
+[frontend]
+frontend_1 ansible_host=192.168.60.60 ansible_user=root ansible_python_interpreter=/usr/bin/python3
+
+[frontend:vars]
+user=nsa
+
+[mysql]
+mysql_1 ansible_host=192.168.70.70  ansible_user=root ansible_python_interpreter=/usr/bin/python3
+
+[mysql:vars]
+user=nsa
