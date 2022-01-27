@@ -1,0 +1,76 @@
+---
+- name: "PHP | Downloading php{{ php_version }} key"
+  get_url:
+    url: https://packages.sury.org/php/apt.gpg
+    dest: /etc/apt/trusted.gpg.d/php.gpg
+
+- name: "PHP | Add debian source for php{{ php_version }}"
+  shell: | 
+    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" |tee /etc/apt/sources.list.d/php.list
+
+- name: PHP | Install
+  apt:
+    update_cache: yes
+    name:
+      - "php{{ php_version }}"
+      - "php{{ php_version }}-cli"
+      - "php{{ php_version }}-fpm"
+      - "php{{ php_version }}-pdo"
+      - "php{{ php_version }}-gd"
+      - "php{{ php_version }}-curl"
+      - "php{{ php_version }}-bcmath"
+      - "php{{ php_version }}-intl"
+      - "php{{ php_version }}-mysql"
+      - "php{{ php_version }}-mbstring"
+      - "php{{ php_version }}-xml"
+      - "php{{ php_version }}-zip"
+    state: present
+
+# - name: "PHP | Give right to php{{ php_version }}-fpm"
+#   shell: | 
+#     a2enmod proxy_fcgi setenvif
+#     a2enconf php{{ php_version }}-fpm
+
+- name: PHP | Composer
+  shell: | 
+      php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+      php -r "if (hash_file('sha384', 'composer-setup.php') === '906a84df04cea2aa72f40b5f787e49f22d4c2f19492ac310e8cba5b96ac8b64115ac402c8cd292b8a03482574915d1a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+      php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+      php -r "unlink('composer-setup.php');"
+
+- name: COMPOSER | Composer update
+  become: true
+  become_user: "{{ user }}"
+  composer:
+    command: update
+    working_dir: "{{ backend_workdir }}"
+
+- name: PHP | Composer install
+  become: true
+  become_user: "{{ user }}"
+  composer:
+    command: install
+    no_dev: no
+    working_dir: "{{ backend_workdir }}"
+
+- name: PHP | Migration
+  become: true
+  become_user: "{{ user }}"
+  command: php artisan migrate --force
+  args:
+    chdir: "{{ backend_workdir }}"
+
+- name: PHP | Laravel start server
+  become: true
+  become_user: "{{ user }}"
+  command: php artisan serve --host={{ backend_host }}
+  args:
+    chdir: "{{ backend_workdir }}"
+
+# - name: PHP | Disable Errors
+#   lineinfile: 
+#     dest: "/etc/php/{{ php_version }}/fpm/php.ini"
+#     regexp: "display_errors ="
+#     line: "display_errors = 0"
+#   notify: php restart
+

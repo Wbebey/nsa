@@ -12,5 +12,4 @@ do
     ssh -o "StrictHostKeyChecking no" vagrant@$ip 'sleep 2 &' 
 done
 
-
-ansible-playbook -i ansible/playbooks/hosts playbook.yml
+ansible-playbook -v  playbook.yml
