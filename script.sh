@@ -4,14 +4,14 @@ set -euxo pipefail
 
 vm=(
     "192.168.50.50"
-    # "192.168.60.60"
+    "192.168.60.60"
     "192.168.70.70"
 )
 
 vagrant up \
     mysql \
     backend \
-    # frontend 
+    frontend 
 
 for ip in ${vm[@]}
 do

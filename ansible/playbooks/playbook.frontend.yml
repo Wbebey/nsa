@@ -20,17 +20,12 @@
       group: "{{ user }}"
 
   - include_role:
-      name: ../roles/nginx/
-
-  - include_role:
       name: ../roles/nodejs/
 
-  - name: NPM | Install dependencies 
-    command: npm install
+  - name: NPM | Build application
+    command: npm run build -- --prod
     args:
       chdir: "{{ workdir }}"
 
-  - name: NPM | Run Frontend 
-    command: npm start
-    args:
-      chdir: "{{ workdir }}"
+  - include_role:
+      name: ../roles/nginx/

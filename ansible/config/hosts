@@ -1,33 +1,35 @@
+[all:vars]
+user=nsa
+
 [backend]
 backend_1 ansible_host=192.168.50.50 ansible_user=root ansible_python_interpreter=/usr/bin/python3
 
 [backend:vars]
-user=nsa
 app_name=backend
 workdir="/home/{{ user }}/{{ app_name }}"
-backend_host=192.168.50.50
-nginx_conf=backend.conf
+artifact_dir="{{ workdir }}"
+nginx_conf="{{ app_name }}.conf"
+
 
 
 [frontend]
 frontend_1 ansible_host=192.168.60.60 ansible_user=root ansible_python_interpreter=/usr/bin/python3
 
 [frontend:vars]
-user=nsa
 app_name=frontend
 workdir="/home/{{ user }}/{{ app_name }}"
+nginx_conf="{{ app_name }}.conf"
+artifact_dir="{{ workdir }}/dist/{{ app_name }}"
 frontend_host=192.168.60.60
-nginx_conf=frontend.conf
 
 
 [mysql]
 mysql_1 ansible_host=192.168.70.70  ansible_user=root ansible_python_interpreter=/usr/bin/python3
 
 [mysql:vars]
-user=nsa
-backend_host=192.168.70.1
+mysql_user_host=192.168.70.1
+bind_address=0.0.0.0 
 mysql_user=laravel
 mysql_port=3306
 mysql_password=laravel
 mysql_dbname=laravel_db
-bind_address=0.0.0.0 

@@ -52,7 +52,7 @@
   mysql_user:
     login_user: "root"
     login_password: "{{ mysql_password }}"
-    host: "{{ backend_host }}"
+    host: "{{ mysql_user_host }}"
     name: "{{ mysql_user }}"
     password: "{{ mysql_password }}"
     state: present

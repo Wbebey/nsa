@@ -18,11 +18,10 @@
 - name: NGINX | Copy app
   copy:
     remote_src: yes
-    src: "{{ workdir }}/"
+    src: "{{ artifact_dir }}/"
     dest: "/var/www/{{ app_name }}"
     owner: "www-data"
     group: "www-data"
-  # with_items: "{{ backend_items }}"
 
 - name: NGINX | Create site symlink
   file:
