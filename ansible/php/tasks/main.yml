@@ -26,10 +26,6 @@
       - "php{{ php_version }}-zip"
     state: present
 
-# - name: "PHP | Give right to php{{ php_version }}-fpm"
-#   shell: | 
-#     a2enmod proxy_fcgi setenvif
-#     a2enconf php{{ php_version }}-fpm
 
 - name: PHP | Composer
   shell: | 
@@ -38,34 +34,7 @@
       php composer-setup.php --install-dir=/usr/local/bin --filename=composer
       php -r "unlink('composer-setup.php');"
 
-- name: COMPOSER | Composer update
-  become: true
-  become_user: "{{ user }}"
-  composer:
-    command: update
-    working_dir: "{{ backend_workdir }}"
 
-- name: PHP | Composer install
-  become: true
-  become_user: "{{ user }}"
-  composer:
-    command: install
-    no_dev: no
-    working_dir: "{{ backend_workdir }}"
-
-- name: PHP | Migration
-  become: true
-  become_user: "{{ user }}"
-  command: php artisan migrate --force
-  args:
-    chdir: "{{ backend_workdir }}"
-
-- name: PHP | Laravel start server
-  become: true
-  become_user: "{{ user }}"
-  command: php artisan serve --host={{ backend_host }}
-  args:
-    chdir: "{{ backend_workdir }}"
 
 # - name: PHP | Disable Errors
 #   lineinfile: 

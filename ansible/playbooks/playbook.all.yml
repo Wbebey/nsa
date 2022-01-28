@@ -3,9 +3,6 @@
   hosts: all
   remote_user: root
   tasks:
-  - include_vars:
-      file: ../vars.yml
-
   - name: "USER | Create user {{ user }}"
     user: 
       name: "{{ user }}"

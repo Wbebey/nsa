@@ -1,4 +1,4 @@
-# ---
+---
 - import_playbook: ansible/playbooks/playbook.all.yml
 # - import_playbook: ansible/playbooks/playbook.mysql.yml
 - import_playbook: ansible/playbooks/playbook.backend.yml

@@ -1,11 +1,8 @@
 ---
-- name: mysql
-  hosts: mysql
-  remote_user: root
-  tasks:
-  - include_vars:
-      file: ../vars.yml
-
-  - include_role:
-      name: ../mysql/
+-   name: mysql
+    hosts: mysql
+    remote_user: root
+    tasks:
+    - include_role:
+        name: ../mysql/
 

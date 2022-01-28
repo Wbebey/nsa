@@ -3,12 +3,9 @@
   hosts: frontend
   remote_user: root
   tasks:
-  - include_vars:
-      file: ../vars.yml
-
   - name: FILE | Create directory
     file:
-      path: "{{ frontend_workdir }}"
+      path: "{{ workdir }}"
       state: directory
       owner: "{{ user }}"
       group: "{{ user }}"
@@ -18,7 +15,7 @@
   - name: FILE | Copy frontend project
     copy:
       src: ../../frontend/front/
-      dest: "{{ frontend_workdir }}"
+      dest: "{{ workdir }}"
       owner: "{{ user }}"
       group: "{{ user }}"
 
@@ -27,3 +24,13 @@
 
   - include_role:
       name: ../nodejs/
+
+  - name: NPM | Install dependencies 
+    command: npm install
+    args:
+      chdir: "{{ workdir }}"
+
+  - name: NPM | Run Frontend 
+    command: npm start
+    args:
+      chdir: "{{ workdir }}"

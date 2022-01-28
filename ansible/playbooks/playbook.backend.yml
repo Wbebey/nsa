@@ -3,12 +3,9 @@
   hosts: backend
   remote_user: root
   tasks:
-  - include_vars:
-      file: ../vars.yml
-
   - name: FILE | Create directory
     file:
-      path: "{{ backend_workdir }}"
+      path: "{{ workdir }}"
       state: directory
       owner: "{{ user }}"
       group: "{{ user }}"
@@ -18,9 +15,49 @@
   - name: FILE | Copy backend project
     copy:
       src: ../../backend/back/
-      dest: "{{ backend_workdir }}"
+      dest: "{{ workdir }}"
       owner: "{{ user }}"
       group: "{{ user }}"
 
   - include_role:
       name: ../php/
+
+  - name: COMPOSER | Composer update
+    become: true
+    become_user: "{{ user }}"
+    composer:
+      command: update
+      working_dir: "{{ workdir }}"
+
+  - name: COMPOSER | Composer install
+    become: true
+    become_user: "{{ user }}"
+    composer:
+      command: install
+      no_dev: no
+      working_dir: "{{ workdir }}"
+
+  # - name: PHP | Migration
+  #   become: true
+  #   become_user: "{{ user }}"
+  #   command: php artisan migrate --force
+  #   args:
+  #     chdir: "{{ workdir }}"
+
+  # - name: PHP | Laravel start server
+  #   become: true
+  #   become_user: "{{ user }}"
+  #   command: php artisan serve --host={{ backend_host }}
+  #   args:
+  #     chdir: "{{ workdir }}"
+
+  - include_role:
+      name: ../nodejs
+  
+  - name: NPM | Build application 
+    command: npm run prod
+    args:
+      chdir: "{{ workdir }}"
+
+  - include_role:
+      name: ../nginx
