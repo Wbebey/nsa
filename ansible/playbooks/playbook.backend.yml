@@ -20,7 +20,7 @@
       group: "{{ user }}"
 
   - include_role:
-      name: ../php/
+      name: ../roles/php/
 
   - name: COMPOSER | Composer update
     become: true
@@ -37,22 +37,15 @@
       no_dev: no
       working_dir: "{{ workdir }}"
 
-  # - name: PHP | Migration
-  #   become: true
-  #   become_user: "{{ user }}"
-  #   command: php artisan migrate --force
-  #   args:
-  #     chdir: "{{ workdir }}"
-
-  # - name: PHP | Laravel start server
-  #   become: true
-  #   become_user: "{{ user }}"
-  #   command: php artisan serve --host={{ backend_host }}
-  #   args:
-  #     chdir: "{{ workdir }}"
+  - name: PHP | Migration
+    become: true
+    become_user: "{{ user }}"
+    command: php artisan migrate --force
+    args:
+      chdir: "{{ workdir }}"
 
   - include_role:
-      name: ../nodejs
+      name: ../roles/nodejs
   
   - name: NPM | Build application 
     command: npm run prod
@@ -60,4 +53,4 @@
       chdir: "{{ workdir }}"
 
   - include_role:
-      name: ../nginx
+      name: ../roles/nginx

@@ -23,5 +23,5 @@
       validate: 'visudo -cf %s'
 
   - include_role:
-      name: ../tools/
+      name: ../roles/tools/
 

@@ -1,0 +1,59 @@
+---
+- name: MYSQL | Install Mysql package
+  apt:
+    update_cache: yes
+    name:
+      - default-mysql-server
+      - default-mysql-client
+      - python-mysqldb
+      - python3-selinux
+      - python3-semanage
+      - python-setuptools
+      - python-dev
+    state: present
+
+- name: MYSQL | Make sure pymysql is present
+  pip:
+    name: pymysql
+    state: present
+
+- name: MYSQL | Create Mysql configuration file
+  template:
+    src: 50-server.cnf.j2
+    dest: /etc/mysql/mariadb.conf.d/50-server.cnf
+  notify:
+    - Restart mysql
+
+- name: MYSQL | Change the authentication plugin 
+  shell: mysql -u root -e 'UPDATE mysql.user SET plugin="mysql_native_password" WHERE user="root" AND host="localhost"'
+  ignore_errors: yes
+
+- name: Flush Privileges
+  shell: mysql -u root -e 'FLUSH PRIVILEGES'
+  ignore_errors: yes
+
+
+- name: MYSQL | Set MySQL root password
+  mysql_user:
+    name: "root"
+    password: "{{ mysql_password }}"
+    state: present
+  ignore_errors: yes
+  
+
+- name: MYSQL | Create database
+  mysql_db:
+    login_user: "root"
+    login_password: "{{ mysql_password }}"
+    name: "{{ mysql_dbname }}"
+    state: present
+
+- name: "MYSQL | Create user {{ mysql_user }}"
+  mysql_user:
+    login_user: "root"
+    login_password: "{{ mysql_password }}"
+    host: "{{ backend_host }}"
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_password }}"
+    state: present
+    priv: "{{ mysql_dbname }}.*:ALL"

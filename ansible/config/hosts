@@ -7,7 +7,6 @@ app_name=backend
 workdir="/home/{{ user }}/{{ app_name }}"
 backend_host=192.168.50.50
 nginx_conf=backend.conf
-# backend_items=["public", "bootstrap", "storage", "vendor"]
 
 
 [frontend]
@@ -26,5 +25,9 @@ mysql_1 ansible_host=192.168.70.70  ansible_user=root ansible_python_interpreter
 
 [mysql:vars]
 user=nsa
-mysql_port= 3306
-mysql_pass="t-nsa-700"
+backend_host=192.168.70.1
+mysql_user=laravel
+mysql_port=3306
+mysql_password=laravel
+mysql_dbname=laravel_db
+bind_address=0.0.0.0 

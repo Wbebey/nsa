@@ -20,10 +20,10 @@
       group: "{{ user }}"
 
   - include_role:
-      name: ../nginx/
+      name: ../roles/nginx/
 
   - include_role:
-      name: ../nodejs/
+      name: ../roles/nodejs/
 
   - name: NPM | Install dependencies 
     command: npm install

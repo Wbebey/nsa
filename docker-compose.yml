@@ -1,20 +1,40 @@
-version: '3.6'
+version: '3.7'
+
 services:
-  gitlab:
-    # build: 
-    #   context: ./
-    image: 'gitlab/gitlab-ce:latest'
-    restart: always
-    hostname: 'localhost'
-    environment:
-      GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://127.0.0.1'
-        gitlab_rails['initial_root_password'] = "t-nsa-700"
-    ports:
-      - '80:80'
-      - '443:443'
-      - '22:22'
+  gitlab-web:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab-ee
+    hostname: gitlab-web
     volumes:
       - '/srv/gitlab/config:/etc/gitlab'
       - '/srv/gitlab/logs:/var/log/gitlab'
       - '/srv/gitlab/data:/var/opt/gitlab'
+    ports:
+      - '2221:22'
+      - '80:80'
+      - '443:443'
+      - '4567:4567'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://localhost'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2221
+        registry_external_url 'http://localhost:4567'
+        registry['enable'] = true
+        gitlab_rails['initial_root_password'] = "t-nsa-700"
+
+    networks:
+      - gitlab-network
+
+  gitlab-runner1:
+    image: gitlab/gitlab-runner:latest
+    container_name: gitlab-runner1
+    hostname: gitlab-runner1
+    volumes:
+      - '/srv/gitlab-runner1-config:/etc/gitlab-runner:Z'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      - gitlab-network
+
+networks:
+  gitlab-network:
+    name: gitlab-network

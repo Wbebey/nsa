@@ -4,5 +4,5 @@
     remote_user: root
     tasks:
     - include_role:
-        name: ../mysql/
+        name: ../roles/mysql/
 
