@@ -12,8 +12,8 @@ frontend-test:
 
 backend-test:   
   stage: test   
-  only:
-    - main
+  # only:
+  #   - main
   script:
     - echo "Running unit tests... This will take a few seconds."
     - cd backend/back
@@ -24,8 +24,8 @@ backend-test:
 
 build-backend:       
   stage: build
-  only:
-    - main
+  # only:
+  #   - main
   artifacts:
     paths:
       - backend/back/vendor/
