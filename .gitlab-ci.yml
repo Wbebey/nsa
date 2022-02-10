@@ -1,3 +1,5 @@
+image : etiennec27/laravelphp:latest
+
 stages:         
   - test
   - build
@@ -5,6 +7,8 @@ stages:
 
 frontend-test:   
   stage: test    
+  tags:
+    - tag-runner1
   script:
     - echo "Running unit tests... This will take a few seconds."
     - sleep 60
@@ -12,6 +16,8 @@ frontend-test:
 
 backend-test:   
   stage: test   
+  tags:
+    - tag-runner2
   # only:
   #   - main
   script:
@@ -24,6 +30,8 @@ backend-test:
 
 build-backend:       
   stage: build
+  tags:
+    - tag-runner2
   # only:
   #   - main
   artifacts:
@@ -43,6 +51,8 @@ build-backend:
 
 deploy-job:      
   stage: deploy  
+  tags:
+    - tag-runner1
   script:
     - echo "Deploying application..."
     - echo "Application successfully deployed."
